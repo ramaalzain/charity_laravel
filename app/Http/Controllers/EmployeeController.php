@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 class EmployeeController extends Controller
 {
     public function index(){
-        $employees=Employee::with('vacations')->latest()->get();
+        $employees=Employee::where('employed',true)->with('vacations')->latest()->get();
        
         foreach($employees as $employee){
             $date=  new DateTime($employee->created_at);
@@ -134,11 +134,11 @@ class EmployeeController extends Controller
        
         
     }
-    public function destroy($id){
+    public function destroy(Request $request){
         try {  
              
-            $input = [ 'id' =>$id ];
-            $validate = Validator::make( $input,
+            
+            $validate = Validator::make( $request->all(),
                 ['id'=>'required|integer|exists:employees,id']);
             if($validate->fails()){
             return response()->json([
@@ -147,7 +147,7 @@ class EmployeeController extends Controller
                'errors' => $validate->errors()
             ], 422);}
           
-            $employee=Employee::with('vacations','account')->findOrFail($id );
+            $employee=Employee::with('vacations','account')->findOrFail($request->id );
          
             $account=Account::with('employee')->findOrFail($employee->account_id);
            
@@ -421,6 +421,51 @@ class EmployeeController extends Controller
          }
          else return false;
     }
-    
+    public function accept(Request $request){
+        try {  
+            
+            
+            
+            $validate = Validator::make( $request->all(),
+                ['id'=>'required|integer|exists:employees,id',
+                'accept'=>'required|bool']);
+            if($validate->fails()){
+            return response()->json([
+               'status' => false,
+               'message' => 'خطأ في التحقق',
+               'errors' => $validate->errors()
+            ], 422);}
+        //   branch relishen shipe
+        
+            $employee=employee:: find($request->id);
+            $employee->employed=$request->accept;
+            $employee->save();
+           
+         
+          if($employee){ 
+            return response()->json(
+                ['status' => true,
+                'message' =>    'تم العملية  بنجاح',
+                'data'=>$employee]
+                 , 200);
+            } 
+                 
+
+            return response()->json(
+                 ['status' => false,
+                'message' =>  " حدث خطأ أثناء عملية جلب البيانات ",
+                'data'=>null]
+                 , 422);
+        }
+        catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        } 
+        catch (\Exception $e) {
+            return response()->json(['message' =>$e
+            //  'حدث خطأ أثناء عملية جلب البيانات'
+            ], 
+             500);
+        }
+    }
 
 }

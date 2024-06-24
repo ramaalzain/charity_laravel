@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('image')->default(null);
             $table->string('cv')->default(null);
             $table->string('address');
+            $table->boolean('accept')->default(false);
             $table->string('mobile');
             $table->foreignId('work_id')->constrained('works','id');
             $table->foreignId('project_id')->constrained('projects','id');

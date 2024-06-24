@@ -33,7 +33,7 @@ class UserController extends Controller
         $work=Work::where('name','متطوع')->first();
         if($work)
         {
-            $users=User::where('work_id',$work->id)->latest()->get();
+            $users=User::where([['work_id',$work->id],['accept',false]])->latest()->get();
          }
         else{$users=User::latest()->get();}
         $users[0]->number=count($users);
@@ -129,11 +129,11 @@ class UserController extends Controller
        
         
     }
-    public function destroy($id){
+    public function destroy(Request $request){
         try {  
              
-            $input = [ 'id' =>$id ];
-            $validate = Validator::make( $input,
+            
+            $validate = Validator::make( $request->all(),
                 ['id'=>'required|integer|exists:users,id']);
             if($validate->fails()){
             return response()->json([
@@ -142,12 +142,15 @@ class UserController extends Controller
                'errors' => $validate->errors()
             ], 422);}
           
-            $user=User::find($id);
+            $user=User::find($request->id);
          
            
           if($user){ 
                 if($user->image!=null){
                     $this->deleteImage($user->image);
+                } 
+                if($user->cv!=null){
+                    $this->deleteCV($user->cv);
                 } 
                 //dissociate user from work
                 $work=$user->work()->first();
@@ -300,7 +303,7 @@ class UserController extends Controller
 
     }
     public function store_cv( $file){
-        $employeextension = $file->getClientOriginalExtension();
+        $userxtension = $file->getClientOriginalExtension();
            
         $imageName = uniqid() . '.' .$employeextension;
         $file->move(public_path('user_cv'), $imageName);
@@ -329,19 +332,89 @@ class UserController extends Controller
          }
          else return false;
     }
-    public function get_accounts(){
-        $accounts=Account::where('type',null)->latest()->get();
-        // $accounts=Account::latest()->get();
-        foreach($accounts as $account){
+    public function show(Request $request){
+        try {  
             
-           $date=  new DateTime($account->created_at);
-           $account->date=$date->format('20y-m-d');
+            
+            
+            $validate = Validator::make( $request->all(),
+                ['id'=>'required|integer|exists:users,id']);
+            if($validate->fails()){
+            return response()->json([
+               'status' => false,
+               'message' => 'خطأ في التحقق',
+               'errors' => $validate->errors()
+            ], 422);}
+        //   branch relishen shipe
+        
+            $user=user:: find($request->id);
            
-            
+         
+          if($user){ 
+            return response()->json(
+                $user
+                 , 200);
+            } 
+                 
+
+            return response()->json(['message'=>" حدث خطأ أثناء عملية جلب البيانات "], 422);
         }
-        return response()->json(
-            $accounts
-            ,200);
+        catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        } 
+        catch (\Exception $e) {
+            return response()->json(['message' =>$e
+            //  'حدث خطأ أثناء عملية جلب البيانات'
+            ], 
+             500);
+        }
+    }
+    public function accept(Request $request){
+        try {  
+            
+            
+            
+            $validate = Validator::make( $request->all(),
+                ['id'=>'required|integer|exists:users,id',
+                'accept'=>'required|bool']);
+            if($validate->fails()){
+            return response()->json([
+               'status' => false,
+               'message' => 'خطأ في التحقق',
+               'errors' => $validate->errors()
+            ], 422);}
+        //   branch relishen shipe
+        
+            $user=user:: find($request->id);
+            $user->accept=$request->accept;
+            $user->save();
+            if(! $request->accept)$this->destroy($request);
+           
+         
+          if($user){ 
+            return response()->json(
+                ['status' => true,
+                'message' =>    'تم العملية  بنجاح',
+                'data'=>$user]
+                 , 200);
+            } 
+                 
+
+            return response()->json(
+                 ['status' => false,
+                'message' =>  " حدث خطأ أثناء عملية جلب البيانات ",
+                'data'=>null]
+                 , 422);
+        }
+        catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        } 
+        catch (\Exception $e) {
+            return response()->json(['message' =>$e
+            //  'حدث خطأ أثناء عملية جلب البيانات'
+            ], 
+             500);
+        }
     }
     public function set_account_type(Request $request){
         try {  

@@ -36,10 +36,12 @@ Route::group([  'middleware' => 'api','prefix' => 'auth'], function ($router) {
 Route::controller(UserController::class)->prefix('user')->group(function (){
     
     Route::get('/','index');
+    Route::post('/show','show');
     Route::get('/get_volunter','get');
     Route::post('/add','store')->middleware('api');
-    Route::delete('/delete/{id}','destroy');
+    Route::delete('/delete','destroy');
     Route::post('/update','update');
+    Route::post('/accept','accept');
     Route::get('/search/{search}','search');
     // route belongto account
     Route::get('/get_accounts','get_accounts');
@@ -78,8 +80,9 @@ Route::controller(EmployeeController::class)->prefix('employee')->group(function
     Route::get('/','index');
     Route::get('/request','request');
     Route::post('/add','store');
-    Route::delete('/delete/{id}','destroy');
+    Route::delete('/delete','destroy');
     Route::post('/update','update');
+    Route::post('/accept','accept');
     Route::post('/show','show');
     Route::get('/search/{search}','search');
     Route::post('/attach','attach_doner_to_project');
