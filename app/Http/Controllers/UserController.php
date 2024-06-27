@@ -305,7 +305,7 @@ class UserController extends Controller
     public function store_cv( $file){
         $userxtension = $file->getClientOriginalExtension();
            
-        $imageName = uniqid() . '.' .$employeextension;
+        $imageName = uniqid() . '.' .$userxtension;
         $file->move(public_path('user_cv'), $imageName);
 
         // Get the full path to the saved image
