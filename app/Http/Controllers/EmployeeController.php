@@ -17,7 +17,7 @@ class EmployeeController extends Controller
        
         foreach($employees as $employee){
             $date=  new DateTime($employee->created_at);
-            $employee->date= $date->format('Y-m-d');;
+            $employee->date= $date->format('Y-m-d');
             $employee->number=count( $employees);
             if( count($employee->vacations)>0)
             {
@@ -45,10 +45,7 @@ class EmployeeController extends Controller
     public function request(){
         
         $employees=Employee::where('employed',false)->latest()->get();
-        // return response()->json(
-        //     $employees
-        //     ,200);
-        $employees[0]->number=count( $employees);
+       
         return response()->json(
             $employees
             ,200);

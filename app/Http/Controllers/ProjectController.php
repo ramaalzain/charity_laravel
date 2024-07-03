@@ -15,8 +15,13 @@ class ProjectController extends Controller
     
     public function index(){
         
-        $projects=Project::with('doners')->latest()->get();
+        $projects=Project::with('doners','user')->latest()->get();
         foreach($projects as $project){
+            $employees=null;
+            $depart=Department::find($project->department_id);
+            if($depart){
+                $employees=$depart->employees()->get();
+            }
             $start = new DateTime($project->start_date);
             $end = new DateTime($project->end_date);
             
@@ -29,7 +34,9 @@ class ProjectController extends Controller
             $prograss= ($done_days/$days);
             $prograss=round($prograss, 2);
             $project->prograss=$prograss*100;
+           
             $project->save();
+            $project->employees=$employees;
         }
         return response()->json(
             $projects

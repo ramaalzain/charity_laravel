@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Account;
 use App\Models\Work;
-use App\Models\Project;
+use App\Models\Employee; 
 use DateTime;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -28,15 +29,50 @@ class UserController extends Controller
             $users
             ,200);
     }
+    public function requests(){
+        $work=Work::where('name','متطوع')->first();
+        if($work)
+        {
+            $users=User::where([['work_id',$work->id],['accept',false]])->latest()->get();
+         
+        }
+        else{
+            $users=User::latest()->get();
+        }
+         
+        $employees=Employee::where('employed',false)->latest()->get();
+         
+        $request=array();
+        foreach( $employees as $employee){
+            $employee['is_user']=false;
+            $date=  new DateTime($employee->created_at);
+            $employee->date= $date->format('Y-m-d');
+            array_push($request, $employee); 
+        }
+        foreach( $users as $user){
+            $user['is_user']=true;
+            $date=  new DateTime($user->created_at);
+            $user->date= $date->format('Y-m-d');
+            array_push($request, $user); 
+        }
+        
+        return response()->json(
+            $request
+            ,200);
+        
+    }
     public function get(){
         
         $work=Work::where('name','متطوع')->first();
         if($work)
         {
             $users=User::where([['work_id',$work->id],['accept',false]])->latest()->get();
-         }
-        else{$users=User::latest()->get();}
-        $users[0]->number=count($users);
+         
+        }
+        else{
+            $users=User::latest()->get();
+        }
+        $users['number']=count($users);
         return response()->json(
             $users
             ,200);
