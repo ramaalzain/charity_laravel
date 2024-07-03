@@ -14,7 +14,7 @@ class Project extends Model
         return $this->belongsTo(Department::class);
     }
     public function user(){
-        return $this->hasOne(User::class);
+        return $this->hasMany(User::class);
     }
     
     public function projectType(){
