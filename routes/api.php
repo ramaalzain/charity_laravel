@@ -43,7 +43,7 @@ Route::controller(UserController::class)->prefix('user')->group(function (){
     Route::delete('/delete','destroy');
     Route::post('/update','update');
     Route::post('/accept','accept');
-    Route::get('/search/{search}','search');
+    Route::post('/search','search');
     // route belongto account
     Route::get('/get_accounts','get_accounts');
     Route::post('/type','set_account_type');

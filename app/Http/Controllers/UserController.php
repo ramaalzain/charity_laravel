@@ -7,7 +7,6 @@ use App\Models\Account;
 use App\Models\Work;
 use App\Models\Employee; 
 use DateTime;
-use App\Http\Controllers\EmployeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -30,7 +29,14 @@ class UserController extends Controller
             ,200);
     }
     public function requests(){
+        
         $work=Work::where('name','متطوع')->first();
+        $orphen=Work::where('name','يتيم')->first();
+        $num_orphen=0;
+        if($orphen){
+            $orphens=User::where('work_id',$orphen->id)->latest()->get();
+            $num_orphen=count($orphens);
+        }
         if($work)
         {
             $users=User::where([['work_id',$work->id],['accept',false]])->latest()->get();
@@ -55,7 +61,7 @@ class UserController extends Controller
             $user->date= $date->format('Y-m-d');
             array_push($request, $user); 
         }
-        
+        $request[0]->orphen=$num_orphen;
         return response()->json(
             $request
             ,200);
@@ -72,7 +78,7 @@ class UserController extends Controller
         else{
             $users=User::latest()->get();
         }
-        $users['number']=count($users);
+        $users[0]->number=count($users);
         return response()->json(
             $users
             ,200);
@@ -548,46 +554,72 @@ class UserController extends Controller
             return response()->json(['message' => 'An error  occurred while requesting this Product.'], 500);
         }
     }
-    public function search($search){
+    public function search(Request $request){
         try {
                 
-            $input = [ 'search' =>$search ];
-               
-            $validatesearch = Validator::make($input, 
-            [ 'search' => 'required|string|min:3' ]); 
-                
+           
+           
+            $validatesearch = Validator::make($request->all(), 
+            [ 'search' => 'required|string|min:3' ,
+              'is_user'=>  'required|boolean' 
+            ]); 
+           
             if($validatesearch->fails()  ){
                     return response()->json([
                         'status' => false,
                          'message' => 'خطأ في التحقق',
                         'errors' => $validatesearch->errors()
                     ], 422);
-                    }
+            }
           
-            $data = user::where('first_name','LIKE', '%' . $search .'%')
-                ->orwhere('last_name','LIKE', '%' . $search .'%')
-                ->orwhere('mobile','LIKE', '%' . $search .'%')
-                ->orwhere('address','LIKE', '%' . $search .'%')->get();      
-              
+            if(($request->is_user ==null ) or  $request->is_user)
+           { 
+            $data = user::where('first_name','LIKE', '%' . $request->search .'%')
+                ->orwhere('last_name','LIKE', '%' . $request->search .'%')
+                ->orwhere('mobile','LIKE', '%' . $request->search .'%')
+                ->orwhere('address','LIKE', '%' . $request->search .'%')->get();      
+           }
             
+           if( $request->is_user==false)
+           { 
+         
+            $data = Employee::where('name','LIKE', '%'. $request->search .'%')
+            ->orwhere('phone','LIKE', '%'. $request->search .'%')
+            ->orwhere('email','LIKE', '%'. $request->search .'%')
+            ->orwhere('address','LIKE', '%'. $request->search .'%')->get(); 
+             
+           }
+           
             if(count($data)>0)
             {
                 $result=array();
                 
-                foreach($data as $user){
-                    
-                    if(! in_array($user,$result)  ){
-                        array_push($result , $user);
+                
+                   
+                   if($request->is_user ){
+                        foreach($data as $user){
                         
+                            if(! in_array($user,$result) and $user->accept !=1  ){
+                                array_push($result , $user);
+                                
+                            }}
+                        foreach($result as $user){
+                            $project=$user->project()->first('name');
+                        if($project)$user->project_id=$project->name;
+                        
+                            $work=$user->work()->first('name');
+                            if( $work)$user->work_id=$work->name;
+                            
+                            }  
                     }
-                    foreach($result as $user){
-                        $project=$user->project()->first('name');
-                        $work=$user->work()->first('name');
-                        $user->work_id=$work->name;
-                        $user->project_id=$project->name;
+                    else{
+                        foreach($data as $user){
+                        
+                            if(! in_array($user,$result) and $user->employed !=1  ){
+                                array_push($result , $user);
+                                
+                            }} 
                     }
-                    
-                }
                 
                 if ($result)
                 { return response()->json(
