@@ -24,5 +24,8 @@ class Project extends Model
     public function doners(){
         return $this->belongsToMany(Doner::class);
     }
+    public function donations(){
+        return $this->hasMany(Donation::class);
+    }
 
 }

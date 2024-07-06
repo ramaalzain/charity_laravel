@@ -10,7 +10,11 @@ class Doner extends Model
     use HasFactory;
     public $timbestamps = true;
     protected $fillable = ['phone' ,'address' , 'email' , 'name'];
+    
     public function projects(){
         return $this->belongsToMany(Project::class);
+    }
+    public function donations(){
+        return $this->hasMany(Donation::class);
     }
 }

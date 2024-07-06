@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('applications', function (Blueprint $table) {
+        Schema::create('donations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('branch_id')->constrained('branchs','id');
-            $table->string('applicant');
+            $table->foreignId('project_id')->constrained('projects','id');
+            $table->foreignId('user_id')->constrained('users','id');
+            $table->foreignId('doner_id')->constrained('doners','id');
+            $table->integer('amount');
             $table->string('detailes');
-            $table->string('cv')->default(null);;
+            
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('applications');
+        Schema::dropIfExists('donations');
     }
 };

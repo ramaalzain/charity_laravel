@@ -314,8 +314,8 @@ class DonerController extends Controller
        
         try {  
             
-            $input = [ 'id' =>$request->id];
-            $validate = Validator::make( $input,
+            
+            $validate = Validator::make( $request->all(),
                 ['id'=>'required|integer|exists:doners,id']);
             if($validate->fails()){
             return response()->json([
@@ -325,7 +325,7 @@ class DonerController extends Controller
             ], 422);}
         //   branch relishen shipe
         
-            $doner=doner::find($request->id);
+            $doner=doner::with('projects')->find($request->id);
           
           if($doner){ 
             return response()->json(

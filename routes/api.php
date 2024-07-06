@@ -70,7 +70,7 @@ Route::controller(DonerController::class)->prefix('doner')->group(function (){
     Route::post('/add','store');
     Route::delete('/delete/{id}','destroy');
     Route::post('/update','update');
-    Route::post('/show','show');
+    Route::get('/show','show');
     Route::post('/attach','attach_doner_to_project');
     Route::post('/search','search');
     
