@@ -14,7 +14,7 @@ class AuthController extends Controller
 {
 
     public function __construct(){
-        $this->middleware('auth:api',['except'=>['register','login','logout','profile']]);
+        $this->middleware('auth:api',['except'=>['register','login','logout','profile','reset_password']]);
     }
     public function register(Request $request)  {
 
@@ -135,16 +135,17 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
-
-        if (Hash::check($request->old_password, $user->password)) {
+       
+        if ( $user && Hash::check($request->old_password, $user->password)) {
             $user->update([
                 'password' => bcrypt($request->new_password),
             ]);
-
+             
             return response()->json([
                 'status' => true,
                 'message' => 'Password changed successfully',
-            ]);
+                'user'=>$user
+            ],200);
         } 
         else {
             return response()->json([
