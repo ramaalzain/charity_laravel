@@ -37,7 +37,7 @@ Route::controller(UserController::class)->prefix('user')->group(function (){
     
     Route::get('/','index');
     Route::get('/request','requests');
-    Route::post('/show','show');
+    Route::get('/show','show');
     Route::get('/get_volunter','get');
     Route::post('/add','store')->middleware('api');
     Route::delete('/delete','destroy');

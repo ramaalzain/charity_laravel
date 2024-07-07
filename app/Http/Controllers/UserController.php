@@ -389,7 +389,7 @@ class UserController extends Controller
             ], 422);}
         //   branch relishen shipe
         
-            $user=user:: find($request->id);
+            $user=user::with('work','project','account')-> find($request->id);
            
          
           if($user){ 
@@ -596,7 +596,7 @@ class UserController extends Controller
                 
                 
                    
-                   if($request->is_user ){
+                if($request->is_user ){
                         foreach($data as $user){
                         
                             if(! in_array($user,$result) and $user->accept !=1  ){
