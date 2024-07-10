@@ -10,7 +10,8 @@ use App\Http\Controllers\DonerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\WorkController;
-use App\Http\Controllers\BranchController; 
+use App\Http\Controllers\BranchController;
+use App\Http\Controllers\SliderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +96,15 @@ Route::controller(ProjectTypeController::class)->prefix('projectType')->group(fu
     Route::post('/add','store')->middleware('api');
     Route::delete('/{id}','destroy');
     Route::post('/{id}','update');
+    
+    
+});
+Route::controller(SliderController::class)->prefix('slider')->group(function (){
+    
+    Route::get('/','index');
+    Route::post('/add','store');
+    Route::delete('/','destroy');
+    Route::post('/','update');
     
     
 });

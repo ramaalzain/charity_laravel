@@ -11,12 +11,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
+use function PHPSTORM_META\type;
+
 class UserController extends Controller
 {
     public function index(){
+        
         $users=User::latest()->get();
-         
+        
         foreach($users as $user){
+            $account=$user->account()->first();
+        
+            if($account->type ==1){
+           
+              array_diff($users,$user);
+               continue;
+            }
+          
             $project=$user->project()->first('name');
             
             $work=$user->work()->first('name');
@@ -73,15 +84,24 @@ class UserController extends Controller
         if($work)
         {
             $users=User::where([['work_id',$work->id],['accept',false]])->latest()->get();
-         
+         if($users){
+                foreach($users as $user){
+                    $user->number=count($users); 
+                    break; 
+                }
+                
+                return response()->json(
+                    $users
+                    ,200);
+            }
         }
         else{
-            $users=User::latest()->get();
+            return response()->json(
+                []
+                ,200);
         }
-        $users[0]->number=count($users);
-        return response()->json(
-            $users
-            ,200);
+        
+        
     }
     public function store(Request $request){
         
