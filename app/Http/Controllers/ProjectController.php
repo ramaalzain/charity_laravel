@@ -343,8 +343,8 @@ class ProjectController extends Controller
        
         try {  
             
-            $input = [ 'id' =>$request->id];
-            $validate = Validator::make( $input,
+           
+            $validate = Validator::make( $request->all(),
                 ['id'=>'required|integer|exists:projects,id']);
             if($validate->fails()){
             return response()->json([
