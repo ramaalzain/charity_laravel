@@ -40,11 +40,13 @@ Route::controller(UserController::class)->prefix('user')->group(function (){
     Route::get('/request','requests');
     Route::get('/show','show');
     Route::get('/get_volunter','get');
+    Route::get('/volunter','get_accepted_volunter');
     Route::post('/add','store')->middleware('api');
     Route::delete('/delete','destroy');
     Route::post('/update','update');
     Route::post('/accept','accept');
     Route::post('/search','search');
+    Route::post('/attach','attach_user_to_project');
     // route belongto account
     Route::get('/get_accounts','get_accounts');
     Route::post('/type','set_account_type');

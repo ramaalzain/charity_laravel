@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Account;
 use App\Models\Work;
+use App\Models\Project;
 use App\Models\Employee; 
 use DateTime;
 use Illuminate\Http\Request;
@@ -83,6 +84,28 @@ class UserController extends Controller
                     $user->number=count($users); 
                     break; 
                 }
+                
+                return response()->json(
+                    $users
+                    ,200);
+            }
+        }
+        else{
+            return response()->json(
+                []
+                ,200);
+        }
+        
+        
+    }
+    public function get_accepted_volunter(){
+        
+        $work=Work::where('name','متطوع')->first();
+        if($work)
+        {
+            $users=User::where([['work_id',$work->id],['accept',True]])->latest()->get();
+         if($users){
+                
                 
                 return response()->json(
                     $users
@@ -472,102 +495,6 @@ class UserController extends Controller
              500);
         }
     }
-    public function set_account_type(Request $request){
-        try {  
-             
-            
-            $validate = Validator::make( $request->all(),
-                ['id'=>'required|integer|exists:accounts,id',
-                'type'=>'required|in:0,2,3,4']);
-            if($validate->fails()){
-            return response()->json([
-               'status' => false,
-               'message' => 'خطأ في التحقق',
-               'errors' => $validate->errors()
-            ], 422);}
-          
-            $account=Account::find($request->id);
-         
-           
-          if($account){ 
-            
-            $account->type=  $request->type; 
-            $result=$account->save();
-             
-            if($result){ 
-                return response()->json(
-                    ['status' => true,
-                    'message' => ' تمت العملية بنجاح',
-                     ]
-               
-                , 200);
-            }
-            }
-
-            return response()->json(null, 422);
-        }
-        catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        } 
-        catch (\Exception $e) {
-            return response()->json(['message' => 'An error occurred while deleting the account.'], 500);
-        }
-    }
-    public function search_account(Request $request){
-        try {
-                
-            $input = [ 'search' =>$request->search ];
-               
-            $validatesearch = Validator::make($input, 
-            [ 'search' => 'required|string|min:3' ]); 
-                
-            if($validatesearch->fails()  ){
-                    return response()->json([
-                        'status' => false,
-                         'message' => 'خطأ في التحقق',
-                        'errors' => $validatesearch->errors()
-                    ], 422);
-                    }
-          
-            $data = Account::where(
-                // 'name','LIKE', '%' . $request->search .'%')
-                // ->orwhere('email','LIKE', '%' . $request->search .'%')
-                 'email','LIKE', '%' . $request->search .'%')
-                -> latest()->get();      
-              
-            
-            if(count($data)>0)
-            {
-                $result=array();
-                 
-                foreach($data as $Account){
-                    
-                    if(! in_array($Account,$result)  ){
-                        $date=  new DateTime($Account->created_at);
-                        $Account->date=$date->format('y-m-d');
-                        array_push($result , $Account);
-                        
-                    }
-                }
-                
-                if ($result)
-                { return response()->json(
-                            
-                    $result
-                    , 200);  
-                }
-            }
-            else{
-                return response()->json([],204); 
-                }
-        }
-        catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        } 
-        catch (\Exception $e) {
-            return response()->json(['message' => 'An error  occurred while requesting this Product.'], 500);
-        }
-    }
     public function search(Request $request){
         try {
                 
@@ -654,5 +581,50 @@ class UserController extends Controller
             'An error  occurred while requesting this Product.'], 500);
         }
 
+    }
+    public function attach_user_to_project(Request $request) {
+
+        try {  
+            
+ 
+            $validate = Validator::make( $request->all(),
+            ['user_id'=>'required|integer|exists:users,id',
+            'project_id'=>'required|integer|exists:projects,id'
+            ]);
+            if($validate->fails()){
+            return response()->json([
+               'status' => false,
+               'message' => 'خطأ في التحقق',
+               'errors' => $validate->errors()
+            ], 422);}
+          
+            $user=user::find($request->user_id);
+            $project=Project::find($request->project_id);
+         
+           
+          if($user and $project){ 
+            
+            $user->project()->associate($project);
+           $user->save();
+            
+            return response()->json(
+                ['message'=>' تم أصافة المشروع الى الجهة المتطوعة بنجاح']
+                , 200);
+             
+                   
+                
+            }
+
+            return response()->json(null, 422);
+        }
+        catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        } 
+        catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred while deleting the D.'], 500);
+        } 
+       
+        
+        
     }
 }
