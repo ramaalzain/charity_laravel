@@ -217,9 +217,8 @@ class DonerController extends Controller
 
         try {  
             
-            $input = [ 'doner_id' =>$request->doner_id,
-                        'project_id'=>$request->project_id ];
-            $validate = Validator::make( $input,
+ 
+            $validate = Validator::make( $request->all(),
             ['doner_id'=>'required|integer|exists:doners,id',
             'project_id'=>'required|integer|exists:projects,id'
             ]);
