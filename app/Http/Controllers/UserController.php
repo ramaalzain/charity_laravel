@@ -17,16 +17,10 @@ class UserController extends Controller
 {
     public function index(){
         
-        $users=User::latest()->get();
+        $users=User::where('account_id','!=',1)->latest()->get();
         
         foreach($users as $user){
-            $account=$user->account()->first();
-        
-            if($account->type ==1){
            
-              array_diff($users,$user);
-               continue;
-            }
           
             $project=$user->project()->first('name');
             

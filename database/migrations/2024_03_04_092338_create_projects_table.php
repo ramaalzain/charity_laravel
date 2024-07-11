@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('prograss')->default(0);
             $table->string('image')->default(null);
             $table->string('description')->default(null);
-            // $table->string('title')->default(null);
+            $table->integer('fundrise')->unsigned()->default(0);
             $table->timestamps();
         });
     }

@@ -9,7 +9,7 @@ class Project extends Model
 {
     use HasFactory;
     public $timbestamps = true;
-    protected $fillable = ['name' , 'description','start_date' , 'end_date'];
+    protected $fillable = ['name' , 'description','start_date' , 'end_date','fundrise'];
     public function department(){
         return $this->belongsTo(Department::class);
     }
