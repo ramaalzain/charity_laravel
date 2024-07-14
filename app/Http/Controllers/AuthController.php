@@ -93,12 +93,13 @@ class AuthController extends Controller
 
     }
     protected function createNewToken($token) {
+       
         return response()->json([
             'access_token'=>$token,
             'token_type'=>'bearer',
             'expires_in'=>auth()->factory()->getTTL()*1200,
             'message'=>'Logged in successfully',
-            'user'=>auth()->user()
+            'account'=>auth()->user()
         ]);
 
 
