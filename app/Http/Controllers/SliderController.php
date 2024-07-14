@@ -21,7 +21,7 @@ class SliderController extends Controller
               
             $validateslider = Validator::make($request->all(), 
             [
-                'type'=>'required|in:0,1,2,3',
+                'main'=>'required|boolean',
                 'title' => 'string|nullable',
                 'description' => 'string|nullable',
                 'image' => 'file|required|mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp,application/wbmp',
@@ -38,7 +38,7 @@ class SliderController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'خطأ في التحقق',
-                    'errors' => $validateslider->errors()
+                    'errors' => $validateslider->errors()->first()
                 ], 422);
             }
       
@@ -121,6 +121,7 @@ class SliderController extends Controller
             $validateslider = Validator::make($request->all(), [
                 'id'=>'required|integer|exists:sliders,id',
                 'title' => 'string|nullable',
+                'main'=>'required|boolean',
                 'description' => 'string|nullable',
                 'image' => 'nullable|file|mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp,application/wbmp',
                 ]);
@@ -133,7 +134,7 @@ class SliderController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'خطأ في التحقق',
-                    'errors' => $validateslider->errors()
+                    'errors' => $validateslider->errors()->first()
                 ], 422);
             }
             $slider=slider::find($request->id);

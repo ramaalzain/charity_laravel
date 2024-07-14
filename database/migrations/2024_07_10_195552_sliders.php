@@ -18,7 +18,7 @@ class Sliders extends Migration
             $table->string('image')->default(null);
             $table->string('title')->default(null);
             $table->string('description')->default(null);
-            $table->enum('type',[0,1,2,3,4])->default(0);
+            $table->boolean('main')->default(false);
             $table->timestamps();
         });
     }

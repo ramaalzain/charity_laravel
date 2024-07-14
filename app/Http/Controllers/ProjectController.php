@@ -13,9 +13,10 @@ use Illuminate\Validation\ValidationException;
 class ProjectController extends Controller
 {
     
-    public function index(){
+    public function index($num_pages=null){
+        if($num_pages !=null)   $projects=Project::with('doners','user')->latest()->take($num_pages)->get();
+        else $projects=Project::with('doners','user')->latest()->get();
         
-        $projects=Project::with('doners','user')->latest()->get();
         foreach($projects as $project){
             $employees=null;
             $depart=Department::find($project->department_id);

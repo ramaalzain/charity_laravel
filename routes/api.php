@@ -56,7 +56,7 @@ Route::controller(UserController::class)->prefix('user')->group(function (){
 });
 Route::controller(ProjectController::class)->prefix('project')->group(function (){
     
-    Route::get('/','index');
+    Route::get('/{num_pages?}','index');
     Route::get('/type_department','get_type_department');
     Route::post('/add','store');
     Route::delete('/delete/{id}','destroy');

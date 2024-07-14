@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Slider extends Model
 {
     use HasFactory;
-    public $fillable=['title','description'];
+    public $fillable=['title','description','main'];
 }
