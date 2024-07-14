@@ -29,7 +29,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors()->first()
             ], 400);
         }
 
@@ -60,7 +60,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors()->first()
             ], 400);
         }
         $account=Account::where('email',$request->email)->first();
@@ -130,7 +130,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Validation error',
-                'errors' => $validator->errors(),
+                'errors' => $validator->errors()->first(),
             ], 400);
         }
 

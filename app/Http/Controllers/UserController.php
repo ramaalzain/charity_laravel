@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Account;
+use App\Models\Donation;
 use App\Models\Work;
 use App\Models\Project;
 use App\Models\Employee; 
@@ -38,6 +39,8 @@ class UserController extends Controller
         
         $work=Work::where('name','متطوع')->first();
         $orphen=Work::where('name','يتيم')->first();
+        $donations=Donation::sum('amount');
+        
         $num_orphen=0;
         if($orphen){
             $orphens=User::where('work_id',$orphen->id)->latest()->get();
@@ -68,6 +71,7 @@ class UserController extends Controller
             array_push($request, $user); 
         }
         $request[0]->orphen=$num_orphen;
+        $request[0]->donations= $donations;
         return response()->json(
             $request
             ,200);
@@ -103,19 +107,28 @@ class UserController extends Controller
         $work=Work::where('name','متطوع')->first();
         if($work)
         {
-            $users=User::where([['work_id',$work->id],['accept',True]])->latest()->get();
-         if($users){
+            $users=User::where([['work_id',$work->id],['accept',True],['project_id',null]])->latest()->get();
+         if(count($users)!=0 and $users){
                 
                 
                 return response()->json(
                     $users
                     ,200);
             }
+            else{
+                return response()->json(
+                    ['status'=>false,
+                    'message'=>"there no volunters",
+                    'errors'=>'there no volunters']
+                    ,422);
+            }
         }
         else{
             return response()->json(
-                []
-                ,200);
+                ['status'=>false,
+                'message'=>"there no volunters",
+                'errors'=>'there no volunters']
+                ,422);
         }
         
         
@@ -146,7 +159,7 @@ class UserController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'خطأ في التحقق',
-                    'errors' => $validateauser->errors()
+                    'errors' => $validateauser->errors()->first()
                 ], 422);
             }
 
@@ -218,7 +231,7 @@ class UserController extends Controller
             return response()->json([
                'status' => false,
                'message' => 'خطأ في التحقق',
-               'errors' => $validate->errors()
+               'errors' => $validate->errors()->first()
             ], 422);}
           
             $user=User::find($request->id);
@@ -280,7 +293,7 @@ class UserController extends Controller
                     return response()->json([
                         'status' => false,
                         'message' => 'خطأ في التحقق',
-                        'errors' => $validate->errors()
+                        'errors' => $validate->errors()->first()
                     ], 422);
                 }
                 
@@ -304,7 +317,7 @@ class UserController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'خطأ في التحقق',
-                    'errors' => $validateuser->errors()
+                    'errors' => $validateuser->errors()->first()
                 ], 422);
             }
             if($user){  
@@ -422,7 +435,7 @@ class UserController extends Controller
             return response()->json([
                'status' => false,
                'message' => 'خطأ في التحقق',
-               'errors' => $validate->errors()
+               'errors' => $validate->errors()->first()
             ], 422);}
         //   branch relishen shipe
         
@@ -460,7 +473,7 @@ class UserController extends Controller
             return response()->json([
                'status' => false,
                'message' => 'خطأ في التحقق',
-               'errors' => $validate->errors()
+               'errors' => $validate->errors()->first()
             ], 422);}
         //   branch relishen shipe
         
@@ -509,7 +522,7 @@ class UserController extends Controller
                     return response()->json([
                         'status' => false,
                          'message' => 'خطأ في التحقق',
-                        'errors' => $validatesearch->errors()
+                        'errors' => $validatesearch->errors()->first()
                     ], 422);
             }
           
@@ -595,7 +608,7 @@ class UserController extends Controller
             return response()->json([
                'status' => false,
                'message' => 'خطأ في التحقق',
-               'errors' => $validate->errors()
+               'errors' => $validate->errors()->first()
             ], 422);}
           
             $user=user::find($request->user_id);

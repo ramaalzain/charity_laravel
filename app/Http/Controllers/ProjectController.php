@@ -67,7 +67,7 @@ class ProjectController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'خطأ في التحقق',
-                    'errors' => $validateproject->errors()
+                    'errors' => $validateproject->errors()->first()
                 ], 422);
             }
 
@@ -131,7 +131,7 @@ class ProjectController extends Controller
             return response()->json([
                'status' => false,
                'message' => 'خطأ في التحقق',
-               'errors' => $validate->errors()
+               'errors' => $validate->errors()->first()
             ], 422);}
           
             $project=project::find($id);
@@ -213,7 +213,7 @@ class ProjectController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'خطأ في التحقق',
-                    'errors' => $validateproject->errors()
+                    'errors' => $validateproject->errors()->first()
                 ], 422);
             }
             $project=project::find($request->id);
@@ -305,7 +305,7 @@ class ProjectController extends Controller
             return response()->json([
                'status' => false,
                'message' => 'خطأ في التحقق',
-               'errors' => $validate->errors()
+               'errors' => $validate->errors()->first()
             ], 422);}
         //   branch relishen shipe
         
@@ -350,7 +350,7 @@ class ProjectController extends Controller
             return response()->json([
                'status' => false,
                'message' => 'خطأ في التحقق',
-               'errors' => $validate->errors()
+               'errors' => $validate->errors()->first()
             ], 422);}
         //   branch relishen shipe
         
