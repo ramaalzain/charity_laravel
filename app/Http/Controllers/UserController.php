@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Notification;
 use App\Models\User;
 use App\Models\Account;
 use App\Models\Donation;
@@ -10,6 +11,7 @@ use App\Models\Project;
 use App\Models\Employee; 
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -18,7 +20,7 @@ use function PHPSTORM_META\type;
 class UserController extends Controller
 {
     public function index(){
-        
+    
         $users=User::where('account_id','!=',1)->latest()->get();
         
         foreach($users as $user){
@@ -484,6 +486,7 @@ class UserController extends Controller
            
          
           if($user){ 
+            $this->sendEmail();
             return response()->json(
                 ['status' => true,
                 'message' =>    'تم العملية  بنجاح',
@@ -639,5 +642,19 @@ class UserController extends Controller
        
         
         
+    }
+  
+    public function sendEmail(){
+        $email = 'ghufrankasho2@gmail.com';
+        $data = [
+            'data' => 'تم قبول للعمل معنا ك متطوع :)',
+        ];
+
+       $result= Mail::to($email)->send(new Notification($data,'emails.user'));
+        if($result)
+        return response()->json([
+            'message' =>'تم إرسال معلوماتك  بالبريد الالكتروني بنجاح']);
+   
+  
     }
 }

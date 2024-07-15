@@ -8,6 +8,8 @@ use App\Models\Employee;
 use App\Models\Vacation;
 use Illuminate\Http\Request;
 use DateTime;
+use App\Mail\Notification;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 class EmployeeController extends Controller
@@ -440,6 +442,7 @@ class EmployeeController extends Controller
            
          
           if($employee){ 
+            
             return response()->json(
                 ['status' => true,
                 'message' =>    'تم العملية  بنجاح',
@@ -463,6 +466,21 @@ class EmployeeController extends Controller
             ], 
              500);
         }
+    }
+    public function sendEmail($data){
+        $email = 'ghufrankasho2@gmail.com';
+        $data = [
+            'data' => 'تم قبولك للعمل معنا   :)',
+            'branch_name'=>$data->branch_name,
+            'depatment_name'=>$data->department_name
+        ];
+
+       $result= Mail::to($email)->send(new Notification($data,'emails.employee'));
+        if($result)
+        return response()->json([
+            'message' =>'تم إرسال معلوماتك  بالبريد الالكتروني بنجاح']);
+   
+  
     }
 
 }
