@@ -54,7 +54,7 @@ class ProjectController extends Controller
                'description' => 'string|required',
                'start_date' => 'string|required',
                'end_date' => 'string|required',
-               'fundrise' => 'integer|min:0|max:1000000',
+               'fundrise' => 'nullable|integer|min:0|max:1000000',
                'project_type_id' => 'integer|required|exists:project_types,id',
                'department_id' => 'integer|required|exists:departments,id',
                'image' => 'file|required|mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp,application/wbmp',
@@ -385,40 +385,7 @@ class ProjectController extends Controller
              500);
         }
     }
-    public function get_type_department(){
-        try{
-          
-            
-            
-            $data=array();
-            $types=ProjectType::get();
-            
-            
-            $departments=Department::get();
-           
-            $data[0]= $types;
-            $data[1]=$departments;
-           if ($departments && $types){
-            return response()->json(
-                ['status' => true,
-                'message' => 'تم تعديل بيانات المشروع بنجاح',
-                'data'=>$data
-                 ]
-                , 200);
-                }
-           else{
-                return response()->json('حدث خطأ أثناء طلب البيانات', 422);
-                }
-
-        }
-        catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'message' =>  $th->getMessage(),
-                // "حدث خطأ أثناء أضافة البيانات"
-            ], 500);
-        }
-    }
+     
     public function search(Request $request){
         try {
                 
