@@ -103,7 +103,7 @@ Route::controller(ProjectTypeController::class)->prefix('projectType')->group(fu
 });
 Route::controller(SliderController::class)->prefix('slider')->group(function (){
     
-    Route::get('/','index');
+    Route::get('/{main?}','index');
     Route::post('/add','store');
     Route::delete('/','destroy');
     Route::post('/','update');

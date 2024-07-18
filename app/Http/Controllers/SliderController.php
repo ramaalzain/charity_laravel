@@ -4,15 +4,34 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Slider;
+use DateTime;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 class SliderController extends Controller
 {
-    public function index(){
-        $sliders=slider::latest()->get();
+    public function index($main=null){
+        if($main !==null)
+       { $sliders=slider::where('main',$main)->latest()->take(4)->get();
+        
+        foreach($sliders as $slider){
+            $date=  new DateTime($slider->created_at);
+            $slider->date= $date->format('Y-m-d');
+             
+        }
+        
+        
         return response()->json(
             $sliders
-            ,200);
+            ,200);}
+            $sliders=slider::latest()->take(4)->get();
+            foreach($sliders as $slider){
+                $date=  new DateTime($slider->created_at);
+                $slider->date= $date->format('Y-m-d');
+                 
+            }
+            return response()->json(
+                $sliders
+                ,200);
     }
     public function store(Request $request){
         
