@@ -12,6 +12,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\WorkController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\SliderController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +57,8 @@ Route::controller(UserController::class)->prefix('user')->group(function (){
 });
 Route::controller(ProjectController::class)->prefix('project')->group(function (){
     
-    Route::get('/{num_pages?}','index');
+    Route::get('/get/{num_pages?}','index');
+    Route::get('/get_projects_with_fundris','get_projects_with_fundris');
     Route::get('/type_department','get_type_department');
     Route::post('/add','store');
     Route::delete('/delete/{id}','destroy');
@@ -95,6 +97,7 @@ Route::controller(EmployeeController::class)->prefix('employee')->group(function
 Route::controller(ProjectTypeController::class)->prefix('projectType')->group(function (){
     
     Route::get('/','index');
+   
     Route::post('/add','store')->middleware('api');
     Route::delete('/{id}','destroy');
     Route::post('/{id}','update');
@@ -128,3 +131,11 @@ Route::controller(BranchController::class)->prefix('branch')->group(function (){
     
     
 });
+Route::get('/payment', [PaymentController::class,'showPaymentForm'])->name('payment.form');
+Route::post('/process-payment', [PaymentController::class,'processPayment'])->name('process.payment');
+Route::get('/payment/success', function () {
+    return 'Payment Successful!';
+})->name('payment.success');
+Route::get('/payment/failure', function () {
+    return 'Payment Failed!';
+})->name('payment.failure');

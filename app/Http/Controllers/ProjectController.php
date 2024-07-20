@@ -43,6 +43,19 @@ class ProjectController extends Controller
             $projects
             ,200);
     }
+    public function get_projects_with_fundris(){
+        $projects=Project::where('fundrise','!=',0)->latest()->get();
+       
+        foreach($projects as $project){
+            
+            $amount=$project->donations()->sum('amount');
+         
+            $project->amount= $amount;
+        }
+        return response()->json(
+            $projects
+            ,200);
+    }
     public function store(Request $request){
         
         try{

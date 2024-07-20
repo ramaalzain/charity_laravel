@@ -17,7 +17,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('payment_type_id')->constrained('payment_types','id');
             $table->foreignId('user_id')->constrained('users','id');
-            $table->integer('amount')->default(0)->unsigned();
+            $table->string('stripe_id');
+            $table->integer('amount');
+            $table->string('currency');
+            $table->string('status');
             $table->timestamps();
         });
     }
