@@ -39,7 +39,7 @@ Route::controller(UserController::class)->prefix('user')->group(function (){
     
     Route::get('/','index');
     Route::get('/request','requests');
-    Route::get('/show','show');
+    Route::post('/show','show');
     Route::get('/get_volunter','get');
     Route::get('/volunter','get_accepted_volunter');
     Route::post('/add','store')->middleware('api');

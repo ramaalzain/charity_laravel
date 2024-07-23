@@ -10,17 +10,17 @@ use App\Models\Work;
 use App\Models\Project;
 use App\Models\Employee; 
 use DateTime;
-use Laravel\Cashier\Billable;
+// use Laravel\Cashier\Billable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-use function PHPSTORM_META\type;
+// use function PHPSTORM_META\type;
 
 class UserController extends Controller
 {
-    use Billable;
+    // use Billable;
     public function index(){
     
         $users=User::where('account_id','!=',1)->latest()->get();
