@@ -40,7 +40,7 @@ class UserController extends Controller
             ,200);
     }
     public function requests(){
-        
+      try{
         $work=Work::where('name','متطوع')->first();
         $orphen=Work::where('name','يتيم')->first();
         $donations=Donation::sum('amount');
@@ -79,6 +79,14 @@ class UserController extends Controller
         return response()->json(
             $request
             ,200);
+      }   catch (\Throwable $th) {
+        return response()->json([
+            'status' => false,
+            'message' =>  $th->getMessage(),
+            // "حدث خطأ أثناء أضافة البيانات"
+        ], 500);
+    } 
+       
         
     }
     public function get(){
