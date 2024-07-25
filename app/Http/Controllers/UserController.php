@@ -85,9 +85,7 @@ class UserController extends Controller
             'message' =>  $th->getMessage(),
             // "حدث خطأ أثناء أضافة البيانات"
         ], 500);
-    } 
-       
-        
+    }    
     }
     public function get(){
         
@@ -156,7 +154,7 @@ class UserController extends Controller
                'first_name' => 'string|required',
                 'address' => 'nullable|string',
                 'mobile' => 'string|required',
-                'account_id' => 'integer|exists:accounts,id',
+                'account_id' => 'nullable|integer|exists:accounts,id',
                 'work_id' => 'nullable|integer|exists:works,id',
                 'project_id' => 'nullable|integer|exists:projects,id',
                 'cv' => "nullable|file|mimetypes:application/pdf,application/txt|max:10000",

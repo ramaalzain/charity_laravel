@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\WorkController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\PaymentController;
 
@@ -131,6 +132,16 @@ Route::controller(BranchController::class)->prefix('branch')->group(function (){
     
     
 });
+Route::controller(ContactController::class)->prefix('contact')->group(function (){
+    
+    Route::get('/','index');
+    Route::post('/add','store');
+    Route::delete('/delete/{id}','destroy');
+    
+    
+    
+});
+
 Route::get('/payment', [PaymentController::class,'showPaymentForm'])->name('payment.form');
 Route::post('/process-payment', [PaymentController::class,'processPayment'])->name('process.payment');
 Route::get('/payment/success', function () {
