@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Models\User;
 use App\Models\Account;
+use App\Models\Employee;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
@@ -93,13 +94,17 @@ class AuthController extends Controller
 
     }
     protected function createNewToken($token) {
-       
+        $account=auth()->user();
+        $result=null;
+        if($account->type=='0')$result=User::where('account_id',$account->id)->first();
+        if($account->type=='2')$result=Employee::where('account_id',$account->id)->first();
         return response()->json([
             'access_token'=>$token,
             'token_type'=>'bearer',
             'expires_in'=>auth()->factory()->getTTL()*1200,
             'message'=>'Logged in successfully',
-            'account'=>auth()->user()
+            'account'=>auth()->user(),
+            'user'=>$result
         ]);
 
 
@@ -114,7 +119,10 @@ class AuthController extends Controller
 
     }
     public function profile(){
-        return response()->json(auth()->user());
+        $account=auth()->user();
+        if($account->type==1)$result=User::with('account')->find($account->id);
+        if($account->type==2)$result=Employee::with('account')->find($account->id);
+        return response()->json($result);
     }
     public function refresh(){
 
