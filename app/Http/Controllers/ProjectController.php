@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
-use App\Models\Employee;
+use App\Models\Donation;
 use App\Models\Project;
 use App\Models\ProjectType;
 use Illuminate\Http\Request;
@@ -413,8 +413,7 @@ class ProjectController extends Controller
             ], 
              500);
         }
-    }
-     
+    }   
     public function search(Request $request){
         try {
                 
@@ -465,5 +464,50 @@ class ProjectController extends Controller
             return response()->json(['message' => 'An error  occurred while requesting this Product.'], 500);
         }
 
+    }
+    public function donat(Request $request) {
+        try {  
+             
+           
+          
+            $validate = Validator::make( $request->all(),
+                [
+                    'id'=>'required|integer|exists:projects,id',
+                    'amount'=>'required|integer',
+                    'detailes'=>'required|string']);
+            if($validate->fails()){
+            return response()->json([
+               'status' => false,
+               'message' => 'خطأ في التحقق',
+               'errors' => $validate->errors()->first()
+            ], 422);}
+          
+            
+            $project=project::find($request->id);
+            $donation = donation::create(array_merge(
+                $validate->validated()
+                
+                ));
+            $donation->project()->associate($project);
+            $result= $donation->save();
+       
+     
+                if($result){ 
+                    return response()->json(
+                   ['status'=>true,
+                     'message' =>' شكرالتبرع لهذاالمشروع ',
+                     'data'=>null]
+                    , 200);
+                }
+            
+
+            return response()->json(['status'=>false,'message'=>"حدث خطأ أثناء عملية شكرالتبرع"], 422);
+        }
+        catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        } 
+        catch (\Exception $e) {
+            return response()->json(['message' => 'حدث خطأ أثناء عملية الحذف'], 500);
+        }
     }
 }

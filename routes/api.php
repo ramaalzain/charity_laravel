@@ -68,6 +68,7 @@ Route::controller(ProjectController::class)->prefix('project')->group(function (
     Route::post('/show','show');
     Route::post('/show_all_detailes','show_all_detailes');
     Route::post('/search','search');
+    Route::post('/donat','donat');
     
     
 });
