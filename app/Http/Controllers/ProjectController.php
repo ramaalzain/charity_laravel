@@ -8,8 +8,11 @@ use App\Models\Project;
 use App\Models\ProjectType;
 use Illuminate\Http\Request;
 use DateTime;
+ 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+ 
+
 class ProjectController extends Controller
 {
     
@@ -42,6 +45,19 @@ class ProjectController extends Controller
         return response()->json(
             $projects
             ,200);
+    }
+    public function get_pages(){
+       
+       
+            $projects=Project::latest()->get();
+            foreach($projects as $project){
+                $date=  new DateTime($project->start_date);
+               $project->date= $date->format('Y-m-d');
+            }
+            return response()->json(
+                $projects
+                ,200);
+       
     }
     public function get_projects_with_fundris(){
         $projects=Project::where('fundrise','!=',0)->latest()->get();

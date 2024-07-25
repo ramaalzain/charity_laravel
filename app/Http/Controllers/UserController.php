@@ -23,17 +23,13 @@ class UserController extends Controller
     // use Billable;
     public function index(){
     
-        $users=User::where('account_id','!=',1)->latest()->get();
-        
+        $users=User::latest()->get();
+       
         foreach($users as $user){
-           
-          
-            $project=$user->project()->first('name');
             
             $work=$user->work()->first('name');
            if($work){ $user->work_id=$work->name;}
-           if($project)
-            {$user->project_id=$project->name;}
+          
         }
         return response()->json(
             $users
@@ -154,6 +150,7 @@ class UserController extends Controller
                'first_name' => 'string|required',
                 'address' => 'nullable|string',
                 'mobile' => 'string|required',
+                // 'email'=>'required|string|email',
                 'account_id' => 'nullable|integer|exists:accounts,id',
                 'work_id' => 'nullable|integer|exists:works,id',
                 'project_id' => 'nullable|integer|exists:projects,id',
@@ -172,10 +169,6 @@ class UserController extends Controller
                     'errors' => $validateauser->errors()->first()
                 ], 422);
             }
-
-           
-             
-                
             if($request->hasFile('image') and $request->file('image')->isValid()){
                 $image= $this->store_image($request->file('image')); 
             }
@@ -183,7 +176,9 @@ class UserController extends Controller
                 $cv= $this->store_cv($request->file('cv')); 
             }
             
-            $user=User::where('account_id',$request->account_id)->first();
+            if($request->account_id != null)
+            {$user=User::where('account_id',$request->account_id)->first();
+            
             if($user){
                 
                 return response()->json(  
@@ -191,18 +186,20 @@ class UserController extends Controller
                     'message' =>'حدث خطأ أثناء أضافة البيانات',
                     'data'=>null], 422);
                 
-            }
+            }}
             $user = User::create(array_merge(
                 $validateauser->validated()
-                
+                , 
                 ));
-            $user->image=$image;
-            $user->cv=$cv;
-            $account=Account::find($request->account_id);
-            $user->account()->associate($account);
+             $user->image=$image;
+            if($request->account_id != null)  {
+                $account=Account::find($request->account_id);
+                $user->account()->associate($account);
+            }
             $work=work::find($request->work_id);
             $user->work()->associate($work);
-          
+            
+            if($request->work_id==5)$user->cv=$cv;
             $result=$user->save();
            if ($result){
                
@@ -490,24 +487,18 @@ class UserController extends Controller
             $user=user:: find($request->id);
             $user->accept=$request->accept;
             $user->save();
-            if(! $request->accept)$this->destroy($request);
+            if(! $request->accept){
+                
+               return $this->destroy($request);
+            }
            
          
-          if($user){ 
-            $this->sendEmail();
-            return response()->json(
-                ['status' => true,
-                'message' =>    'تم العملية  بنجاح',
-                'data'=>$user]
-                 , 200);
-            } 
+        
+            return   $this->sendEmail($user->email);
+          
                  
 
-            return response()->json(
-                 ['status' => false,
-                'message' =>  " حدث خطأ أثناء عملية جلب البيانات ",
-                'data'=>null]
-                 , 422);
+           
         }
         catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
@@ -652,17 +643,23 @@ class UserController extends Controller
         
     }
   
-    public function sendEmail(){
-        $email = 'ghufrankasho2@gmail.com';
+    public function sendEmail($email){
+        // $email = 'ghufrankasho2@gmail.com';
         $data = [
             'data' => 'تم قبول للعمل معنا ك متطوع :)',
         ];
 
        $result= Mail::to($email)->send(new Notification($data,'emails.user'));
         if($result)
-        return response()->json([
+        return response()->json(['status' => true,
             'message' =>'تم إرسال معلوماتك  بالبريد الالكتروني بنجاح']);
-   
+     else{
+        return response()->json(
+            ['status' => false,
+           'message' =>  " حدث خطأ أثناء عملية إرسال معلوماتك  بالبريد الالكتروني  ",
+           'data'=>null]
+            , 422);
+     }
   
     }
 }

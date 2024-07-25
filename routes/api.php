@@ -40,7 +40,7 @@ Route::controller(UserController::class)->prefix('user')->group(function (){
     
     Route::get('/','index');
     Route::get('/request','requests');
-    Route::post('/show','show');
+    Route::get('/show','show');
     Route::get('/get_volunter','get');
     Route::get('/volunter','get_accepted_volunter');
     Route::post('/add','store')->middleware('api');
@@ -59,6 +59,7 @@ Route::controller(UserController::class)->prefix('user')->group(function (){
 Route::controller(ProjectController::class)->prefix('project')->group(function (){
     
     Route::get('/get/{num_pages?}','index');
+    Route::get('/get_pages','get_pages');
     Route::get('/get_projects_with_fundris','get_projects_with_fundris');
     Route::get('/type_department','get_type_department');
     Route::post('/add','store');
@@ -90,7 +91,7 @@ Route::controller(EmployeeController::class)->prefix('employee')->group(function
     Route::delete('/delete','destroy');
     Route::post('/update','update');
     Route::post('/accept','accept');
-    Route::post('/show','show');
+    Route::get('/show','show');
     Route::get('/search/{search}','search');
     Route::post('/attach','attach_doner_to_project');
     
