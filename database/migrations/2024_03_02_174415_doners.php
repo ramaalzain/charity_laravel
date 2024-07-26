@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('address');
             $table->string('phone');
             $table->string('image')->default(null);
+            $table->foreignId('account_id')->constrained('accounts','id');
+            
             $table->timestamps();
         });
     }

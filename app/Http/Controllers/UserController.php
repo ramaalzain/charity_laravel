@@ -151,7 +151,7 @@ class UserController extends Controller
                 'address' => 'nullable|string',
                 'mobile' => 'string|required',
                 // 'email'=>'required|string|email',
-                'account_id' => 'nullable|integer|exists:accounts,id',
+                'account_id' => 'integer|exists:accounts,id',
                 'work_id' => 'nullable|integer|exists:works,id',
                 'project_id' => 'nullable|integer|exists:projects,id',
                 'cv' => "nullable|file|mimetypes:application/pdf,application/txt|max:10000",

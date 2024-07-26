@@ -27,6 +27,10 @@ class Account extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Employee::class);
     }
+    public function doner()
+    {
+        return $this->hasOne(Doner::class);
+    }
     protected $fillable = [
         'email', 'password','type'
     ];
