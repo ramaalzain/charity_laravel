@@ -7,6 +7,7 @@ use Auth;
 use App\Models\User;
 use App\Models\Account;
 use App\Models\Employee;
+use App\Models\Doner;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
@@ -98,6 +99,7 @@ class AuthController extends Controller
         $result=null;
         if($account->type=='0')$result=User::where('account_id',$account->id)->first();
         if($account->type=='2')$result=Employee::where('account_id',$account->id)->first();
+        if($account->type=='3')$result=Doner::where('account_id',$account->id)->first();
         return response()->json([
             'access_token'=>$token,
             'token_type'=>'bearer',

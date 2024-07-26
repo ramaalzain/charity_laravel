@@ -62,7 +62,7 @@ class DonerController extends Controller
                 return response()->json(
                     ['status' => true,
                     'message' =>    'تم أضافة بيانات الجهة الداعمة بنجاح',
-                    'data'=>null]
+                    'data'=>$Doner]
                  , 201);
                 }
            else{

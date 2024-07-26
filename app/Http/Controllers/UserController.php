@@ -183,7 +183,7 @@ class UserController extends Controller
                 
                 return response()->json(  
                     ['status' => false,
-                    'message' =>'حدث خطأ أثناء أضافة البيانات',
+                    'message' =>'!!لقد قمت تسجيل بياناتك من قبل',
                     'data'=>null], 422);
                 
             }}
