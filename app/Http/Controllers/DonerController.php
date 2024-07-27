@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use App\Models\Account;
 use App\Models\Doner;
 use App\Models\Project;
 class DonerController extends Controller
@@ -27,7 +28,8 @@ class DonerController extends Controller
                'address' => 'string|required',
                'email'=>'required|string|email|unique:doners',
                'image' => 'file|required|mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp,application/wbmp',
-
+               'account_id' => 'integer|exists:accounts,id',
+               
             ]);
             $validateDoner->sometimes('image', 'required|mimetypes:image/vnd.wap.wbmp', function ($input) {
                 return $input->file('image') !== null && $input->file('image')->getClientOriginalExtension() === 'wbmp';
@@ -38,7 +40,7 @@ class DonerController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'خطأ في التحقق',
-                    'errors' => $validateDoner->errors()
+                    'errors' => $validateDoner->errors()->first()
                 ], 422);
             }
             if($request->hasFile('image') and $request->file('image')->isValid()){
@@ -49,6 +51,9 @@ class DonerController extends Controller
                 $validateDoner->validated()
                 
                 ));
+            $account=Account::find($request->account_id);
+            $Doner->account()->associate($account);
+           
             $Doner->image=$image;
         
             $result=$Doner->save();
@@ -57,7 +62,7 @@ class DonerController extends Controller
                 return response()->json(
                     ['status' => true,
                     'message' =>    'تم أضافة بيانات الجهة الداعمة بنجاح',
-                    'data'=>null]
+                    'data'=>$Doner]
                  , 201);
                 }
            else{

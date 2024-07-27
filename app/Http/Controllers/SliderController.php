@@ -140,7 +140,7 @@ class SliderController extends Controller
             $validateslider = Validator::make($request->all(), [
                 'id'=>'required|integer|exists:sliders,id',
                 'title' => 'string|nullable',
-                'main'=>'required|boolean',
+                'main'=>'nullable|boolean',
                 'description' => 'string|nullable',
                 'image' => 'nullable|file|mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp,application/wbmp',
                 ]);

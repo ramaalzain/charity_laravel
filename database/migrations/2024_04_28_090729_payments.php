@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('payment_type_id')->constrained('payment_types','id');
-            $table->foreignId('user_id')->constrained('users','id');
+            $table->foreignId('sender_id')->constrained('users','id');
+            $table->foreignId('reciver_id')->constrained('users','id');
             $table->string('stripe_id');
             $table->integer('amount');
             $table->string('currency');
