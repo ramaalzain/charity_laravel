@@ -8,5 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Slider extends Model
 {
     use HasFactory;
+    public $timestamps = true;
+    
     public $fillable=['title','description','main'];
 }

@@ -40,7 +40,7 @@ class DonerController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'خطأ في التحقق',
-                    'errors' => $validateDoner->errors()
+                    'errors' => $validateDoner->errors()->first()
                 ], 422);
             }
             if($request->hasFile('image') and $request->file('image')->isValid()){

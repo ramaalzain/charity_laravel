@@ -18,7 +18,7 @@ class Accounts extends Migration
           
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('type',[0,1,2,3,4])->default(null);
+            $table->enum('type',[0,1,2,3])->default(null);//0=>user,1=>admin, 2=>employee, 3=>support
             $table->timestamps();
         });
     }
