@@ -472,7 +472,7 @@ class ProjectController extends Controller
           
             $validate = Validator::make( $request->all(),
                 [
-                    'id'=>'required|integer|exists:projects,id',
+                    'id'=>'nullable|integer|exists:projects,id',
                     'amount'=>'required|integer',
                     'detailes'=>'required|string']);
             if($validate->fails()){
@@ -482,20 +482,24 @@ class ProjectController extends Controller
                'errors' => $validate->errors()->first()
             ], 422);}
           
-            
-            $project=project::find($request->id);
             $donation = donation::create(array_merge(
                 $validate->validated()
                 
                 ));
-            $donation->project()->associate($project);
+            if($request->id!==null){
+                
+                $project=project::find($request->id);
+                $donation->project()->associate($project);
+            }
+           
+            
             $result= $donation->save();
        
      
                 if($result){ 
                     return response()->json(
                    ['status'=>true,
-                     'message' =>' شكرالتبرع لهذاالمشروع ',
+                     'message' =>' شكرا لتبرعك  ',
                      'data'=>null]
                     , 200);
                 }
