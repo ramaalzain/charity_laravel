@@ -97,7 +97,7 @@ class AuthController extends Controller
     protected function createNewToken($token) {
         $account=auth()->user();
         $result=null;
-        if($account->type=='0')$result=User::where('account_id',$account->id)->first();
+        if($account->type=='0')$result=User::with('work')->where('account_id',$account->id)->first();
         if($account->type=='2')$result=Employee::where('account_id',$account->id)->first();
         if($account->type=='3')$result=Doner::where('account_id',$account->id)->first();
         return response()->json([
