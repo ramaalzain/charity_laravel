@@ -291,29 +291,20 @@ class UserController extends Controller
             return response()->json(['message' => 'An error occurred while deleting the user.'], 500);
         }
     }
-    public function update(Request $request, $id){
+    public function update(Request $request){
         try{
-            $input = [ 'id' =>$id ];
-            $validate = Validator::make( $input,
-            ['id'=>'required|integer|exists:users,id']);
-            if($validate->fails()){
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'خطأ في التحقق',
-                        'errors' => $validate->errors()->first()
-                    ], 422);
-                }
-                
-            $user=User::find($id);
+           
+           
             
             $validateuser = Validator::make($request->all(), [
+                'id'=>'required|integer|exists:users,id',
                 'last_name' => 'string',
                 'first_name' => 'string',
                 'address' => 'string|nullable',
                 'mobile' => 'string|nullable',
                 'account_id' => 'nullable|integer|exists:accounts,id',
                 'work_id' => 'nullable|integer|exists:works,id',
-                // 'project_id' => 'nullable|integer|exists:projects,id',
+                 
                 'image' => 'file|mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp,application/wbmp',
                 ]);
             $validateuser->sometimes('image', 'required|mimetypes:image/vnd.wap.wbmp', function ($input) {
@@ -327,6 +318,7 @@ class UserController extends Controller
                     'errors' => $validateuser->errors()->first()
                 ], 422);
             }
+            $user=User::find($request->id);
             if($user){  
                 $user->update($validateuser->validated());
                 if($request->hasFile('image') and $request->file('image')->isValid()){
@@ -339,6 +331,7 @@ class UserController extends Controller
 
                     $work=Work::find($request->work_id);
                     $user->work()->associate($work);
+                   
                 }
                 // if($request->project_id != null){
 
@@ -350,7 +343,9 @@ class UserController extends Controller
                 $user->save();
                 
                 return response()->json(
-                    'تم تعديل بيانات المستخدم بنجاح'
+                ['status'=>true,
+                'message'=> 'تم تعديل بيانات المستخدم بنجاح',
+                'data'=>$user]
                     , 200);
             }
             
