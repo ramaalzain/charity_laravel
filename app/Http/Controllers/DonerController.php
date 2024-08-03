@@ -237,12 +237,21 @@ class DonerController extends Controller
             $Doner=Doner::find($request->doner_id);
             $project=Project::find($request->project_id);
             // return $Doner;
-           
+           $projects= $Doner->projects;
+          foreach($projects as $pro){
+            if($project->id==$pro->id){
+                return response()->json([
+                    'status'=>false,
+                    'message'=>'هذه الجهة تدعم المشروع مسبقا !!',
+                    'errors'=>''
+                ], 422); 
+            }
+          }
           if($Doner and $project){ 
            $Doner->projects()->attach( $project);
             
             return response()->json(
-                ['message'=>' تم أصافة المشروع الى الجهة الداعمة بنجاح']
+                ['message'=>' تم أضافة المشروع الى الجهة الداعمة بنجاح']
                 , 200);
              
                    

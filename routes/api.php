@@ -138,7 +138,7 @@ Route::controller(ContactController::class)->prefix('contact')->group(function (
     
     Route::get('/','index');
     Route::post('/add','store');
-    Route::delete('/delete/{id}','destroy');
+    Route::delete('/delete','destroy');
     
     
     
